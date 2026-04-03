@@ -43,8 +43,21 @@ class BlurTextViewManager :
     if (value != null) view.setColor(value)
   }
 
+  @ReactProp(name = "spoiler")
+  override fun setSpoiler(view: BlurTextView, value: Boolean) {
+    view.setSpoiler(value)
+
+    view.setOnClickListener {
+      val event = com.facebook.react.bridge.Arguments.createMap()
+      val reactContext = view.context as ThemedReactContext
+      reactContext
+        .getJSModule(com.facebook.react.uimanager.events.RCTEventEmitter::class.java)
+        .receiveEvent(view.id, "onPress", event)
+    }
+  }
+
   override fun setBlurRadius(view: BlurTextView, value: Float) {
-view?.setBlurRadius(value)
+    view?.setBlurRadius(value)
   }
 
 
@@ -71,6 +84,12 @@ view?.setBlurRadius(value)
   @ReactProp(name = "lineHeight")
   override fun setLineHeight(view: BlurTextView?, lineHeight: Float) {
     view?.setLineHeightReact(lineHeight)
+  }
+
+  override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
+    return mutableMapOf(
+      "onPress" to mapOf("registrationName" to "onPress")
+    )
   }
 
   override fun onAfterUpdateTransaction(view: BlurTextView) {

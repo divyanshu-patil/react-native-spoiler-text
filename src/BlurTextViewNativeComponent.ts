@@ -1,7 +1,10 @@
 import { codegenNativeComponent } from 'react-native';
 import type { HostComponent } from 'react-native';
 import type { ColorValue, ViewProps } from 'react-native';
-import type { Float } from 'react-native/Libraries/Types/CodegenTypes';
+import type {
+  DirectEventHandler,
+  Float,
+} from 'react-native/Libraries/Types/CodegenTypes';
 
 export default codegenNativeComponent<BlurTextViewProps>('BlurTextView', {
   interfaceOnly: true,
@@ -22,6 +25,11 @@ export interface BlurTextViewProps extends ViewProps {
    * Blur radius
    */
   blurRadius?: Float;
+
+  /**
+   * Blur radius
+   */
+  spoiler?: boolean;
 
   /**
    * Font size of the text.
@@ -51,4 +59,6 @@ export interface BlurTextViewProps extends ViewProps {
    * Line height of the text.
    */
   lineHeight?: Float;
+
+  onPress?: DirectEventHandler<{}>;
 }
