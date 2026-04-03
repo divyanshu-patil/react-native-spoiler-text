@@ -1,11 +1,10 @@
-import type { ColorValue, ViewProps } from 'react-native';
+import type { BlurTextViewProps } from './BlurTextViewNativeComponent';
 
-type Props = ViewProps & {
-  color?: ColorValue;
-};
-
-export function BlurTextView(_props: Props): never {
+/**
+ * fallback for web and non native platforms
+ */
+export function BlurTextView(_props: BlurTextViewProps): never {
   throw new Error(
-    "'react-native-blur-text' is only supported on native platforms."
+    "'react-native-blurtext' is only supported on native platforms."
   );
 }
