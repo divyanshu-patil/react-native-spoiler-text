@@ -27,6 +27,10 @@ Blur your text. Reveal on tap. Built with Fabric / New Architecture support.
 
 ---
 
+https://github.com/user-attachments/assets/f40efca3-7a3c-4d25-8f05-98eb25e8ad5c
+
+---
+
 ## ✨ Features
 
 - 🔥 **Fully native** — rendered in native UIKit (iOS) and Canvas/Paint (Android), no JS blur hacks
