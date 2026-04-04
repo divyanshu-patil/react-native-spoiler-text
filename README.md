@@ -27,7 +27,7 @@ Blur your text. Reveal on tap. Built with Fabric / New Architecture support.
 
 ---
 
-https://github.com/user-attachments/assets/f40efca3-7a3c-4d25-8f05-98eb25e8ad5c
+![rn spoiler view](https://github.com/user-attachments/assets/6d2413cc-7d89-4c8f-a03c-089ada26279e)
 
 ---
 
