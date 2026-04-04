@@ -1,4 +1,4 @@
-#include "BlurTextViewShadowNode.h"
+#include "SpoilerTextViewShadowNode.h"
 
 #include "conversions.h"
 #include <android/log.h>
@@ -7,16 +7,16 @@
 
 namespace facebook::react {
 
-extern const char BlurTextViewComponentName[] = "BlurTextView";
+extern const char SpoilerTextViewComponentName[] = "SpoilerTextView";
 
-void BlurTextViewShadowNode::setMeasurementsManager(
-    const std::shared_ptr<BlurTextViewMeasurementManager>
+void SpoilerTextViewShadowNode::setMeasurementsManager(
+    const std::shared_ptr<SpoilerTextViewMeasurementManager>
         &measurementsManager) {
   ensureUnsealed();
   measurementsManager_ = measurementsManager;
 }
 
-void BlurTextViewShadowNode::dirtyLayoutIfNeeded() {
+void SpoilerTextViewShadowNode::dirtyLayoutIfNeeded() {
   const auto state = this->getStateData();
   const auto counter = state.getForceHeightRecalculationCounter();
 
@@ -26,7 +26,7 @@ void BlurTextViewShadowNode::dirtyLayoutIfNeeded() {
   }
 }
 
-Size BlurTextViewShadowNode::measureContent(
+Size SpoilerTextViewShadowNode::measureContent(
     const LayoutContext &layoutContext,
     const LayoutConstraints &layoutConstraints) const {
 
@@ -36,10 +36,10 @@ Size BlurTextViewShadowNode::measureContent(
   try {
     folly::dynamic dyn = toDynamic(props);
     std::string json = folly::toJson(dyn);
-    __android_log_print(ANDROID_LOG_INFO, "BlurText", "props = %s",
+    __android_log_print(ANDROID_LOG_INFO, "SpoilerText", "props = %s",
                         json.c_str());
   } catch (const std::exception &e) {
-    __android_log_print(ANDROID_LOG_ERROR, "BlurText", "toDynamic() error: %s",
+    __android_log_print(ANDROID_LOG_ERROR, "SpoilerText", "toDynamic() error: %s",
                         e.what());
   }
 

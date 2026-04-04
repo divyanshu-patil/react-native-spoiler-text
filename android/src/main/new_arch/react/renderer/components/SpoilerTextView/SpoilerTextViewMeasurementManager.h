@@ -1,21 +1,21 @@
 #pragma once
 
-#include <react/renderer/components/BlurTextViewSpec/Props.h>
+#include <react/renderer/components/SpoilerTextViewSpec/Props.h>
 #include <react/renderer/core/LayoutConstraints.h>
 #include <react/utils/ContextContainer.h>
 
 namespace facebook::react {
 
-class BlurTextViewMeasurementManager {
+class SpoilerTextViewMeasurementManager {
 public:
-  BlurTextViewMeasurementManager(
+  SpoilerTextViewMeasurementManager(
       const std::shared_ptr<const ContextContainer> &contextContainer)
       : contextContainer_(contextContainer) {}
 
-  Size measure(SurfaceId surfaceId, int viewTag, const BlurTextViewProps &props,
+  Size measure(SurfaceId surfaceId, int viewTag, const SpoilerTextViewProps &props,
                LayoutConstraints layoutConstraints) const;
 
-  float measureSingleLineHeight(const BlurTextViewProps &props) const;
+  float measureSingleLineHeight(const SpoilerTextViewProps &props) const;
 
 private:
   const std::shared_ptr<const ContextContainer> contextContainer_;

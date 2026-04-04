@@ -1,26 +1,22 @@
-# react-native-blur-text
+# react-native-spoiler-text
 
 react native text blur you can blur ittext but blur
 
 ## Installation
 
-
 ```sh
-npm install react-native-blur-text
+npm install react-native-spoiler-text
 ```
-
 
 ## Usage
 
-
 ```js
-import { BlurTextView } from "react-native-blur-text";
+import { SpoilerTextView } from 'react-native-spoiler-text';
 
 // ...
 
-<BlurTextView color="tomato" />
+<SpoilerTextView color="tomato" />;
 ```
-
 
 ## Contributing
 

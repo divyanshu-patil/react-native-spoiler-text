@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.13)
 set(CMAKE_VERBOSE_MAKEFILE on)
 
 # The JS spec name → codegen outputs react_codegen_<name>
-set(LIB_SPEC_LITERAL BlurTextViewSpec)
+set(LIB_SPEC_LITERAL SpoilerTextViewSpec)
 
 # Your actual custom C++ folder name
-set(LIB_CUSTOM_LITERAL BlurTextView)
+set(LIB_CUSTOM_LITERAL SpoilerTextView)
 
 set(LIB_TARGET_NAME react_codegen_${LIB_SPEC_LITERAL})
 
@@ -29,7 +29,7 @@ file(GLOB LIB_CODEGEN_SRCS CONFIGURE_DEPENDS
 add_library(
         ${LIB_TARGET_NAME}
         SHARED
-        ${CMAKE_CURRENT_SOURCE_DIR}/BlurTextViewSpec.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/SpoilerTextViewSpec.cpp
         ${LIB_CUSTOM_SRCS}
         ${LIB_CODEGEN_SRCS}
 )

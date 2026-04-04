@@ -1,9 +1,9 @@
-import type { BlurTextViewProps } from './BlurTextViewNativeComponent';
+import type { SpoilerTextViewProps } from './SpoilerTextViewNativeComponent';
 
 /**
  * fallback for web and non native platforms
  */
-export function BlurTextView(_props: BlurTextViewProps): never {
+export function SpoilerTextView(_props: SpoilerTextViewProps): never {
   throw new Error(
     "'react-native-blurtext' is only supported on native platforms."
   );

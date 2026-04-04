@@ -15,13 +15,13 @@
 #include <ReactCommon/TurboModule.h>
 #include <jsi/jsi.h>
 
-#include <react/renderer/components/BlurTextView/BlurTextViewComponentDescriptor.h>
+#include <react/renderer/components/SpoilerTextView/SpoilerTextViewComponentDescriptor.h>
 
 namespace facebook::react {
 
 JSI_EXPORT
 std::shared_ptr<TurboModule>
-BlurTextViewSpec_ModuleProvider(const std::string &moduleName,
+SpoilerTextViewSpec_ModuleProvider(const std::string &moduleName,
                                 const JavaTurboModule::InitParams &params);
 
 } // namespace facebook::react

@@ -1,28 +1,28 @@
 #pragma once
 
-#include "BlurTextViewMeasurementManager.h"
-#include "BlurTextViewState.h"
+#include "SpoilerTextViewMeasurementManager.h"
+#include "SpoilerTextViewState.h"
 
-#include <react/renderer/components/BlurTextViewSpec/EventEmitters.h>
-#include <react/renderer/components/BlurTextViewSpec/Props.h>
+#include <react/renderer/components/SpoilerTextViewSpec/EventEmitters.h>
+#include <react/renderer/components/SpoilerTextViewSpec/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 
 namespace facebook::react {
 
-JSI_EXPORT extern const char BlurTextViewComponentName[];
+JSI_EXPORT extern const char SpoilerTextViewComponentName[];
 /*
- * `ShadowNode` for <BlurTextView> component.
+ * `ShadowNode` for <SpoilerTextView> component.
  */
-class BlurTextViewShadowNode final
-    : public ConcreteViewShadowNode<BlurTextViewComponentName,
-                                    BlurTextViewProps, BlurTextViewEventEmitter,
-                                    BlurTextViewState> {
+class SpoilerTextViewShadowNode final
+    : public ConcreteViewShadowNode<SpoilerTextViewComponentName,
+                                    SpoilerTextViewProps, SpoilerTextViewEventEmitter,
+                                    SpoilerTextViewState> {
 public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
 
   // This constructor is called when we "update" shadow node, e.g. after
   // updating shadow node's state
-  BlurTextViewShadowNode(ShadowNode const &sourceShadowNode,
+  SpoilerTextViewShadowNode(ShadowNode const &sourceShadowNode,
                          ShadowNodeFragment const &fragment)
       : ConcreteViewShadowNode(sourceShadowNode, fragment) {
     dirtyLayoutIfNeeded();
@@ -35,10 +35,10 @@ public:
     return traits;
   }
 
-  // Associates a shared `BlurTextViewMeasurementManager` with the
+  // Associates a shared `SpoilerTextViewMeasurementManager` with the
   // node.
   void
-  setMeasurementsManager(const std::shared_ptr<BlurTextViewMeasurementManager>
+  setMeasurementsManager(const std::shared_ptr<SpoilerTextViewMeasurementManager>
                              &measurementsManager);
 
   void dirtyLayoutIfNeeded();
@@ -49,6 +49,6 @@ public:
 
 private:
   int forceHeightRecalculationCounter_;
-  std::shared_ptr<BlurTextViewMeasurementManager> measurementsManager_;
+  std::shared_ptr<SpoilerTextViewMeasurementManager> measurementsManager_;
 };
 } // namespace facebook::react

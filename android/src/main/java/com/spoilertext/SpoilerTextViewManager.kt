@@ -1,28 +1,28 @@
-package com.blurtext
+package com.spoilertext
 
 import android.content.Context
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.*
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.facebook.react.viewmanagers.BlurTextViewManagerDelegate
-import com.facebook.react.viewmanagers.BlurTextViewManagerInterface
+import com.facebook.react.viewmanagers.SpoilerTextViewManagerDelegate
+import com.facebook.react.viewmanagers.SpoilerTextViewManagerInterface
 import com.facebook.yoga.YogaMeasureMode
 
-@ReactModule(name = BlurTextViewManager.NAME)
-class BlurTextViewManager :
-  SimpleViewManager<BlurTextView>(),
-  BlurTextViewManagerInterface<BlurTextView> {
+@ReactModule(name = SpoilerTextViewManager.NAME)
+class SpoilerTextViewManager :
+  SimpleViewManager<SpoilerTextView>(),
+  SpoilerTextViewManagerInterface<SpoilerTextView> {
 
-  private val mDelegate: ViewManagerDelegate<BlurTextView> =
-    BlurTextViewManagerDelegate(this)
+  private val mDelegate: ViewManagerDelegate<SpoilerTextView> =
+    SpoilerTextViewManagerDelegate(this)
 
-  override fun getDelegate(): ViewManagerDelegate<BlurTextView>? = mDelegate
+  override fun getDelegate(): ViewManagerDelegate<SpoilerTextView>? = mDelegate
 
   override fun getName(): String = NAME
 
-  override fun createViewInstance(context: ThemedReactContext): BlurTextView {
-    val view = BlurTextView(context)
+  override fun createViewInstance(context: ThemedReactContext): SpoilerTextView {
+    val view = SpoilerTextView(context)
     view.setOnClickListener {
       val event = com.facebook.react.bridge.Arguments.createMap()
       val reactContext = view.context as ThemedReactContext
@@ -34,7 +34,7 @@ class BlurTextViewManager :
   }
 
   override fun updateState(
-    view: BlurTextView,
+    view: SpoilerTextView,
     props: ReactStylesDiffMap?,
     stateWrapper: StateWrapper?
   ): Any? {
@@ -42,47 +42,47 @@ class BlurTextViewManager :
     return super.updateState(view, props, stateWrapper)
   }
 
-  override fun setText(view: BlurTextView?, value: String?) {
+  override fun setText(view: SpoilerTextView?, value: String?) {
     view?.setValue(value)
   }
 
   @ReactProp(name = "color")
-  override fun setColor(view: BlurTextView, value: Int?) {
+  override fun setColor(view: SpoilerTextView, value: Int?) {
     if (value != null) view.setColor(value)
   }
 
   @ReactProp(name = "spoiler")
-  override fun setSpoiler(view: BlurTextView, value: Boolean) {
+  override fun setSpoiler(view: SpoilerTextView, value: Boolean) {
     view.setSpoiler(value)
   }
 
-  override fun setBlurRadius(view: BlurTextView, value: Float) {
+  override fun setBlurRadius(view: SpoilerTextView, value: Float) {
     view?.setBlurRadius(value)
   }
 
 
   @ReactProp(name = "fontSize", defaultFloat = ViewDefaults.FONT_SIZE_SP)
-  override fun setFontSize(view: BlurTextView, value: Float) {
+  override fun setFontSize(view: SpoilerTextView, value: Float) {
     view.setFontSize(value)
   }
 
   @ReactProp(name = "fontFamily")
-  override fun setFontFamily(view: BlurTextView?, family: String?) {
+  override fun setFontFamily(view: SpoilerTextView?, family: String?) {
     view?.setFontFamily(family)
   }
 
   @ReactProp(name = "fontWeight")
-  override fun setFontWeight(view: BlurTextView?, weight: String?) {
+  override fun setFontWeight(view: SpoilerTextView?, weight: String?) {
     view?.setFontWeight(weight)
   }
 
   @ReactProp(name = "fontStyle")
-  override fun setFontStyle(view: BlurTextView?, style: String?) {
+  override fun setFontStyle(view: SpoilerTextView?, style: String?) {
     view?.setFontStyle(style)
   }
 
   @ReactProp(name = "lineHeight")
-  override fun setLineHeight(view: BlurTextView?, lineHeight: Float) {
+  override fun setLineHeight(view: SpoilerTextView?, lineHeight: Float) {
     view?.setLineHeightReact(lineHeight)
   }
 
@@ -92,13 +92,13 @@ class BlurTextViewManager :
     )
   }
 
-  override fun onAfterUpdateTransaction(view: BlurTextView) {
+  override fun onAfterUpdateTransaction(view: SpoilerTextView) {
     super.onAfterUpdateTransaction(view)
     view.afterUpdateTransaction()
   }
 
   override fun setPadding(
-    view: BlurTextView?,
+    view: SpoilerTextView?,
     left: Int,
     top: Int,
     right: Int,
@@ -125,6 +125,6 @@ class BlurTextViewManager :
   }
 
   companion object {
-    const val NAME = "BlurTextView"
+    const val NAME = "SpoilerTextView"
   }
 }

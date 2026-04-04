@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { BlurTextView } from 'react-native-blur-text';
+import { SpoilerTextView } from 'react-native-spoiler-text';
 import Animated, {
   useAnimatedProps,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 
-const AnimatedBlurTextView = Animated.createAnimatedComponent(BlurTextView);
+const AnimatedSpoilerTextView =
+  Animated.createAnimatedComponent(SpoilerTextView);
 
 export default function App() {
   const text = `this  is an example of blur view`;
@@ -30,7 +31,7 @@ export default function App() {
         This is normal text{' '}
         {text.split(' ').map((item, index) => (
           <Text key={index}>
-            <AnimatedBlurTextView
+            <AnimatedSpoilerTextView
               animatedProps={animatedProps}
               fontSize={34}
               // spoiler={spoiler}
@@ -46,7 +47,7 @@ export default function App() {
           </Text>
         ))}
         and this is normal text{' '}
-        <BlurTextView
+        <SpoilerTextView
           spoiler={spoiler}
           style={styles.box}
           text={'hello 2'}

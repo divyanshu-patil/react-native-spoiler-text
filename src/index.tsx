@@ -1,1 +1,1 @@
-export { BlurTextView } from './BlurTextView';
+export { SpoilerTextView } from './SpoilerTextView';

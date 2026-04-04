@@ -6,7 +6,7 @@ module.exports = {
     platforms: {
       android: {
         cmakeListsPath: '../android/src/main/new_arch/CMakeLists.txt',
-        componentDescriptors: ['BlurTextViewComponentDescriptor'],
+        componentDescriptors: ['SpoilerTextViewComponentDescriptor'],
       },
     },
   },

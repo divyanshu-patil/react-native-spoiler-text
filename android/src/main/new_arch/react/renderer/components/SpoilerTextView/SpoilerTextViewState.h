@@ -4,13 +4,13 @@
 
 namespace facebook::react {
 
-class BlurTextViewState {
+class SpoilerTextViewState {
 public:
   // match to declaration order
-  BlurTextViewState() : lineCount(1), forceHeightRecalculationCounter_(0) {}
+  SpoilerTextViewState() : lineCount(1), forceHeightRecalculationCounter_(0) {}
 
   // Used by Kotlin to set current text value
-  BlurTextViewState(BlurTextViewState const &previousState, folly::dynamic data)
+  SpoilerTextViewState(SpoilerTextViewState const &previousState, folly::dynamic data)
       : lineCount((int)data["lineCount"].getInt()),
         forceHeightRecalculationCounter_(
             (int)data["forceHeightRecalculationCounter"].getInt()) {};

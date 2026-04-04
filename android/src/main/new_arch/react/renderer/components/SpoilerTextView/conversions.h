@@ -1,11 +1,11 @@
 #pragma once
 
 #include <folly/dynamic.h>
-#include <react/renderer/components/BlurTextViewSpec/Props.h>
+#include <react/renderer/components/SpoilerTextViewSpec/Props.h>
 
 namespace facebook::react {
 
-inline folly::dynamic toDynamic(const BlurTextViewProps &props) {
+inline folly::dynamic toDynamic(const SpoilerTextViewProps &props) {
   folly::dynamic d = folly::dynamic::object();
   d["fontSize"] = props.fontSize;
   d["fontWeight"] = props.fontWeight;

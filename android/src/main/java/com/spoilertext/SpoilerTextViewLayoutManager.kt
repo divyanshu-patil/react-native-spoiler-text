@@ -1,8 +1,8 @@
-package com.blurtext
+package com.spoilertext
 
 import com.facebook.react.bridge.Arguments
 
-class BlurTextViewLayoutManager(private val view: BlurTextView) {
+class SpoilerTextViewLayoutManager(private val view: SpoilerTextView) {
   private var forceHeightRecalculationCounter: Int = 0
 
   fun invalidateLayout() {

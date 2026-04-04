@@ -1,14 +1,14 @@
 #import <React/RCTViewComponentView.h>
 #import <UIKit/UIKit.h>
 
-#ifndef BlurTextViewNativeComponent_h
-#define BlurTextViewNativeComponent_h
+#ifndef SpoilerTextViewNativeComponent_h
+#define SpoilerTextViewNativeComponent_h
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface BlurTextView : RCTViewComponentView
+@interface SpoilerTextView : RCTViewComponentView
 @end
 
 NS_ASSUME_NONNULL_END
 
-#endif /* BlurTextViewNativeComponent_h */
+#endif /* SpoilerTextViewNativeComponent_h */

@@ -1,4 +1,4 @@
-package com.blurtext
+package com.spoilertext
 
 import android.content.Context
 import android.graphics.Typeface
@@ -7,7 +7,6 @@ import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
-import android.util.Log
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.views.text.ReactTypefaceUtils.applyStyles
@@ -104,7 +103,7 @@ object MeasurementStore {
   }
 
   // Returns plain text defaultValue, or "I" if no defaultValue
-  private fun getInitialText(defaultView: BlurTextView, props: ReadableMap?): CharSequence {
+  private fun getInitialText(defaultView: SpoilerTextView, props: ReadableMap?): CharSequence {
     val defaultValue = props?.getString("defaultValue")
 
     // If there is no default value, assume text is one line, "I" is a good approximation of height
@@ -115,7 +114,7 @@ object MeasurementStore {
 
   }
 
-  private fun getInitialFontSize(defaultView: BlurTextView, props: ReadableMap?): Float {
+  private fun getInitialFontSize(defaultView: SpoilerTextView, props: ReadableMap?): Float {
     val propsFontSize = props?.getDouble("fontSize")?.toFloat()
     if (propsFontSize == null) return defaultView.textSize
 
@@ -125,7 +124,7 @@ object MeasurementStore {
   // Called when view measurements are not available in the store
   // Most likely first measurement, we can use defaultValue, as no native state is set yet
   private fun initialMeasure(context: Context, id: Int?, width: Float, props: ReadableMap?): Long {
-    val defaultView = BlurTextView(context)
+    val defaultView = SpoilerTextView(context)
 
     val text = getInitialText(defaultView, props)
     val fontSize = getInitialFontSize(defaultView, props)

@@ -1,8 +1,8 @@
-#include "BlurTextViewState.h"
+#include "SpoilerTextViewState.h"
 
 namespace facebook::react {
 
-int BlurTextViewState::getForceHeightRecalculationCounter() const {
+int SpoilerTextViewState::getForceHeightRecalculationCounter() const {
   return forceHeightRecalculationCounter_;
 }
 

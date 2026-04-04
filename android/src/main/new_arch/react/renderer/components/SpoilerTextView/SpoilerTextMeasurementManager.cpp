@@ -1,4 +1,4 @@
-#include "BlurTextViewMeasurementManager.h"
+#include "SpoilerTextViewMeasurementManager.h"
 #include "conversions.h"
 
 #include <fbjni/fbjni.h>
@@ -9,8 +9,8 @@ using namespace facebook::jni;
 
 namespace facebook::react {
 
-Size BlurTextViewMeasurementManager::measure(
-    SurfaceId surfaceId, int viewTag, const BlurTextViewProps &props,
+Size SpoilerTextViewMeasurementManager::measure(
+    SurfaceId surfaceId, int viewTag, const SpoilerTextViewProps &props,
     LayoutConstraints layoutConstraints) const {
 
   const jni::global_ref<jobject> &fabricUIManager =
@@ -26,7 +26,7 @@ Size BlurTextViewMeasurementManager::measure(
   auto minimumSize = layoutConstraints.minimumSize;
   auto maximumSize = layoutConstraints.maximumSize;
 
-  local_ref<JString> componentName = make_jstring("BlurTextView");
+  local_ref<JString> componentName = make_jstring("SpoilerTextView");
 
   // ✅ extraData (viewTag)
   folly::dynamic extraData = folly::dynamic::object();

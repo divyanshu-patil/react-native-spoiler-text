@@ -1,4 +1,4 @@
-package com.blurtext
+package com.spoilertext
 
 import android.content.Context
 import android.graphics.BlurMaskFilter
@@ -18,9 +18,9 @@ import com.facebook.react.views.text.ReactTypefaceUtils.parseFontWeight
 import kotlin.math.ceil
 import kotlin.math.sqrt
 
-class BlurTextView : AppCompatTextView {
+class SpoilerTextView : AppCompatTextView {
   var stateWrapper: StateWrapper? = null
-  lateinit var layoutManager: BlurTextViewLayoutManager
+  lateinit var layoutManager: SpoilerTextViewLayoutManager
   var fontSize: Float? = null
 
   private var typefaceDirty = false
@@ -59,7 +59,7 @@ class BlurTextView : AppCompatTextView {
     setPadding(0, 0, 0, descent)
 
     setBackgroundColor(Color.TRANSPARENT)
-    layoutManager = BlurTextViewLayoutManager(this)
+    layoutManager = SpoilerTextViewLayoutManager(this)
   }
 
   // ── Blur ─────────────────────────────────────────────────────────────────────

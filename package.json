@@ -1,5 +1,5 @@
 {
-  "name": "react-native-blur-text",
+  "name": "react-native-spoiler-text",
   "version": "0.1.0",
   "description": "react native text blur you can blur ittext but blur",
   "main": "./lib/module/index.js",
@@ -32,7 +32,7 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace react-native-blur-text-example",
+    "example": "yarn workspace react-native-spoiler-text-example",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "prepare": "bob build",
     "typecheck": "tsc",
@@ -47,14 +47,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/divyanshu-patil/react-native-blur-text.git"
+    "url": "git+https://github.com/divyanshu-patil/react-native-spoiler-text.git"
   },
   "author": "Divyanshu Patil <work.divyanshupatil@gmail.com> (https://github.com/divyanshu-patil)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/divyanshu-patil/react-native-blur-text/issues"
+    "url": "https://github.com/divyanshu-patil/react-native-spoiler-text/issues"
   },
-  "homepage": "https://github.com/divyanshu-patil/react-native-blur-text#readme",
+  "homepage": "https://github.com/divyanshu-patil/react-native-spoiler-text#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -111,7 +111,7 @@
     ]
   },
   "codegenConfig": {
-    "name": "BlurTextViewSpec",
+    "name": "SpoilerTextViewSpec",
     "type": "all",
     "jsSrcsDir": "src",
     "android": {
@@ -119,8 +119,8 @@
     },
     "ios": {
       "components": {
-        "BlurTextView": {
-          "className": "BlurTextView"
+        "SpoilerTextView": {
+          "className": "SpoilerTextView"
         }
       }
     }

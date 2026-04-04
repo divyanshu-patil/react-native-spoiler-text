@@ -79,7 +79,7 @@ android {
 
     namespace "blurtext.example"
     defaultConfig {
-        applicationId "blurtext.example"
+        applicationId "spoilertext.example"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

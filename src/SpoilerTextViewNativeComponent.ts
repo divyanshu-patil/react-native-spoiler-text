@@ -6,11 +6,11 @@ import type {
   Float,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
-export default codegenNativeComponent<BlurTextViewProps>('BlurTextView', {
+export default codegenNativeComponent<SpoilerTextViewProps>('SpoilerTextView', {
   interfaceOnly: true,
-}) as HostComponent<BlurTextViewProps>;
+}) as HostComponent<SpoilerTextViewProps>;
 
-export interface BlurTextViewProps extends ViewProps {
+export interface SpoilerTextViewProps extends ViewProps {
   /**
    * Text color.
    */
