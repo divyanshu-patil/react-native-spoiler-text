@@ -16,19 +16,17 @@ import com.facebook.react.views.text.ReactTypefaceUtils.applyStyles
 import com.facebook.react.views.text.ReactTypefaceUtils.parseFontStyle
 import com.facebook.react.views.text.ReactTypefaceUtils.parseFontWeight
 import kotlin.math.ceil
+import kotlin.math.sqrt
 
 class BlurTextView : AppCompatTextView {
   var stateWrapper: StateWrapper? = null
-
   lateinit var layoutManager: BlurTextViewLayoutManager
-
   var fontSize: Float? = null
 
   private var typefaceDirty = false
   private var fontFamily: String? = null
   private var fontStyle: Int = ReactConstants.UNSET
   private var fontWeight: Int = ReactConstants.UNSET
-
   private var lineHeightPx: Int? = null
   private var isInitialized = false
 
@@ -39,24 +37,13 @@ class BlurTextView : AppCompatTextView {
   private var isRevealing = false
   private var revealProgress = 0f
 
-  // Blur state
+  private var revealTouchX: Float = -1f
+  private var revealTouchY: Float = -1f
   private var blurRadius: Float = 0f
 
-  constructor(context: Context) : super(context) {
-    prepareComponent()
-  }
-
-  constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-    prepareComponent()
-  }
-
-  constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-    context,
-    attrs,
-    defStyleAttr
-  ) {
-    prepareComponent()
-  }
+  constructor(context: Context) : super(context) { prepareComponent() }
+  constructor(context: Context, attrs: AttributeSet) : super(context, attrs) { prepareComponent() }
+  constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) { prepareComponent() }
 
   private fun prepareComponent() {
     isVerticalScrollBarEnabled = true
@@ -64,33 +51,18 @@ class BlurTextView : AppCompatTextView {
     includeFontPadding = false
     setLineSpacing(0f, 1f)
     isElegantTextHeight = false
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-      setFallbackLineSpacing(false)
-    }
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-      breakStrategy = LineBreaker.BREAK_STRATEGY_HIGH_QUALITY
-    }
-
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) setFallbackLineSpacing(false)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) breakStrategy = LineBreaker.BREAK_STRATEGY_HIGH_QUALITY
     setPadding(0, 0, 0, 0)
     setBackgroundColor(Color.TRANSPARENT)
-
     layoutManager = BlurTextViewLayoutManager(this)
   }
 
-  // ── Blur ────────────────────────────────────────────────────────────────────
+  // ── Blur ─────────────────────────────────────────────────────────────────────
 
-  /**
-   * Sets a Gaussian blur radius on the text paint.
-   * Pass 0f (or any non-positive value) to remove the blur.
-   *
-   * Hardware acceleration must be disabled on this view for BlurMaskFilter
-   * to render correctly; the method handles that automatically.
-   */
   fun setBlurRadius(radius: Float) {
     blurRadius = radius
-    applyBlur()
+    if (!isRevealing) applyBlur()
     requestLayout()
   }
 
@@ -106,89 +78,67 @@ class BlurTextView : AppCompatTextView {
     requestLayout()
   }
 
-  // ── Text ────────────────────────────────────────────────────────────────────
+  // ── Text ──────────────────────────────────────────────────────────────────────
 
   fun setValue(value: CharSequence?) {
     if (value == null) return
     if (text?.toString() == value.toString()) return
     text = value
-
     requestLayout()
     invalidate()
-
     layoutManager.invalidateLayout()
   }
 
-  // ── Appearance ──────────────────────────────────────────────────────────────
+  // ── Appearance ────────────────────────────────────────────────────────────────
 
   fun setFontSize(size: Float) {
     if (size == 0f) return
     val sizePx = ceil(PixelUtil.toPixelFromSP(size))
     fontSize = sizePx
     setTextSize(TypedValue.COMPLEX_UNIT_PX, sizePx)
-
-    requestLayout()
-    invalidate()
-    layoutManager.invalidateLayout()
+    requestLayout(); invalidate(); layoutManager.invalidateLayout()
   }
 
   fun setFontFamily(family: String?) {
-    if (family != fontFamily) {
-      fontFamily = family
-      typefaceDirty = true
-    }
-
-    requestLayout()
-    invalidate()
+    if (family != fontFamily) { fontFamily = family; typefaceDirty = true }
+    requestLayout(); invalidate()
   }
 
   fun setFontWeight(weight: String?) {
     val parsed = parseFontWeight(weight)
-    if (parsed != fontWeight) {
-      fontWeight = parsed
-      typefaceDirty = true
-    }
-
-    requestLayout()
-    invalidate()
+    if (parsed != fontWeight) { fontWeight = parsed; typefaceDirty = true }
+    requestLayout(); invalidate()
   }
 
   fun setFontStyle(style: String?) {
     val parsed = parseFontStyle(style)
-    if (parsed != fontStyle) {
-      fontStyle = parsed
-      typefaceDirty = true
-    }
-
-    requestLayout()
-    invalidate()
+    if (parsed != fontStyle) { fontStyle = parsed; typefaceDirty = true }
+    requestLayout(); invalidate()
   }
 
   fun setLineHeightReact(lineHeight: Float) {
     if (lineHeight <= 0f) return
     lineHeightPx = ceil(PixelUtil.toPixelFromDIP(lineHeight)).toInt()
-    applyLineHeight()
-
-    requestLayout()
-    invalidate()
+    applyLineHeight(); requestLayout(); invalidate()
   }
 
   private fun applyLineHeight() {
     val lh = lineHeightPx ?: return
-
     val fm = paint.fontMetricsInt
-    val fontHeight = fm.descent - fm.ascent
-
-    val spacing = lh - fontHeight
-
-    if (spacing >= 0) {
-      // RN-like behavior
-      setLineSpacing(spacing.toFloat(), 1f)
-    } else {
-      // If lineHeight < fontHeight, RN still clamps
-      setLineSpacing(0f, 1f)
-    }
+    val spacing = lh - (fm.descent - fm.ascent)
+    setLineSpacing(if (spacing >= 0) spacing.toFloat() else 0f, 1f)
   }
+
+  // ── Particle data class ───────────────────────────────────────────────────────
+
+  private data class Particle(
+    var x: Float, var y: Float,
+    var vx: Float, var vy: Float,
+    var alpha: Int, var radius: Float,
+    var life: Float, var maxLife: Float
+  )
+
+  // ── Spoiler activate ──────────────────────────────────────────────────────────
 
   private val frameCallback = object : android.view.Choreographer.FrameCallback {
     override fun doFrame(frameTimeNanos: Long) {
@@ -199,92 +149,111 @@ class BlurTextView : AppCompatTextView {
     }
   }
 
-  private data class Particle(
-    var x: Float, var y: Float,
-    var vx: Float, var vy: Float,
-    var alpha: Int, var radius: Float,
-    var life: Float, var maxLife: Float
-  )
-
-
   fun setSpoiler(active: Boolean) {
-    if (!active && isSpoilerActive) {
-      // Start reveal animation instead of instant hide
-      startReveal()
-      return
-    }
+    if (!active && isSpoilerActive) { startReveal(); return }
     isSpoilerActive = active
     if (active) {
-      isRevealing = false
-      revealProgress = 0f
+      isRevealing = false; revealProgress = 0f
       setTextColor(Color.TRANSPARENT)
       if (width > 0 && height > 0) spawnParticles()
       android.view.Choreographer.getInstance().postFrameCallback(frameCallback)
     } else {
       android.view.Choreographer.getInstance().removeFrameCallback(frameCallback)
-      particles.clear()
-      setTextColor(particleColor)
-      invalidate()
+      particles.clear(); setTextColor(particleColor); invalidate()
     }
   }
 
+  fun setRevealTouchPoint(x: Float, y: Float) { revealTouchX = x; revealTouchY = y }
+
+  // ── Reveal ────────────────────────────────────────────────────────────────────
+
   private fun startReveal() {
-    isRevealing = true
-    isSpoilerActive = false
-    revealProgress = 0f
+    isRevealing = true; isSpoilerActive = false; revealProgress = 0f
+    if (revealTouchX < 0f) revealTouchX = width / 2f
+    if (revealTouchY < 0f) revealTouchY = height / 2f
     android.view.Choreographer.getInstance().removeFrameCallback(frameCallback)
-    // Set text color back so it's ready to draw, alpha controlled by canvas layer
     setTextColor(particleColor)
+    setLayerType(LAYER_TYPE_SOFTWARE, null)
     android.view.Choreographer.getInstance().postFrameCallback(revealCallback)
+  }
+
+  private fun maxRevealRadius(): Float {
+    val w = width.toFloat(); val h = height.toFloat()
+    val cx = revealTouchX; val cy = revealTouchY
+    return maxOf(
+      sqrt(cx * cx + cy * cy),
+      sqrt((w - cx) * (w - cx) + cy * cy),
+      sqrt(cx * cx + (h - cy) * (h - cy)),
+      sqrt((w - cx) * (w - cx) + (h - cy) * (h - cy))
+    )
   }
 
   private val revealCallback = object : android.view.Choreographer.FrameCallback {
     override fun doFrame(frameTimeNanos: Long) {
-      revealProgress += 0.033f
-      if (revealProgress >= 1f) {
-        isRevealing = false
-        isSpoilerActive = false
-        particles.clear()
-        setTextColor(particleColor)
-        invalidate()
-        return
-      }
+      revealProgress += 0.028f
+      if (revealProgress >= 1f) { finishReveal(); return }
+
       updateRevealParticles()
+
+      // Blur dissolves: starts at 14px, fully gone by 60% of reveal
+      val blurFade = (1f - (revealProgress / 0.6f)).coerceIn(0f, 1f)
+      val dynamicBlur = 14f * blurFade
+      paint.maskFilter = if (dynamicBlur > 0.5f) BlurMaskFilter(dynamicBlur, BlurMaskFilter.Blur.NORMAL) else null
+
       invalidate()
       android.view.Choreographer.getInstance().postFrameCallback(this)
     }
   }
 
+  private fun finishReveal() {
+    isRevealing = false; isSpoilerActive = false; particles.clear()
+    setTextColor(particleColor)
+    paint.maskFilter = if (blurRadius > 0f) BlurMaskFilter(blurRadius, BlurMaskFilter.Blur.NORMAL)
+    else { setLayerType(LAYER_TYPE_HARDWARE, null); null }
+    revealTouchX = -1f; revealTouchY = -1f
+    invalidate()
+  }
 
-
+  /**
+   * Telegram-style radial wipe:
+   *  - A circle expands from the touch point (ease-out curve).
+   *  - Particles INSIDE the circle fade out quietly in place — no scatter.
+   *  - A 30px feather band at the wave edge softens the boundary.
+   *  - Particles OUTSIDE keep their normal idle drift.
+   */
   private fun updateRevealParticles() {
-    val w = width.toFloat()
-    val revealX = revealProgress * (w + 100f) - 50f
+    val maxR = maxRevealRadius()
+    val eased = 1f - (1f - revealProgress) * (1f - revealProgress)  // ease-out
+    val waveRadius = eased * (maxR + 40f)
+    val feather = 30f
 
     val iterator = particles.iterator()
     while (iterator.hasNext()) {
       val p = iterator.next()
-      val distFromWave = p.x - revealX
+      val dist = sqrt((p.x - revealTouchX).let { it * it } + (p.y - revealTouchY).let { it * it })
 
       when {
-        distFromWave < -40f -> {
-          iterator.remove()
+        dist < waveRadius - feather -> iterator.remove()           // fully cleared
+        dist < waveRadius -> {                                      // feather band: fade in place
+          val fadeT = (waveRadius - dist) / feather
+          p.alpha = ((1f - fadeT) * p.alpha).toInt().coerceIn(0, 255)
+          if (p.alpha < 2) iterator.remove()
         }
-        distFromWave < 40f -> {
-          val waveProgress = 1f - ((distFromWave + 40f) / 80f)
-          p.x -= waveProgress * 3f
-          p.vy *= 0.85f
-          p.vx *= 0.85f
-          p.alpha = ((1f - waveProgress) * 220f).toInt().coerceIn(0, 255)
-          if (p.alpha <= 0) iterator.remove()
-        }
-        else -> {
-          p.x += p.vx
-          p.y += p.vy
+        else -> {                                                   // outside: normal drift
+          p.x += p.vx; p.y += p.vy; p.life += 1f
+          val prog = p.life / p.maxLife
+          p.alpha = when {
+            prog < 0.2f -> (prog / 0.2f * 200).toInt()
+            prog > 0.8f -> ((1f - (prog - 0.8f) / 0.2f) * 200).toInt()
+            else -> 200
+          }.coerceIn(0, 255)
+          if (p.life >= p.maxLife) iterator.remove()
         }
       }
     }
   }
+
+  // ── Particle helpers ──────────────────────────────────────────────────────────
 
   fun setColor(colorInt: Int?) {
     particleColor = colorInt ?: Color.BLACK
@@ -293,8 +262,7 @@ class BlurTextView : AppCompatTextView {
 
   private fun spawnParticles() {
     particles.clear()
-    val w = width.toFloat()
-    val h = height.toFloat()
+    val w = width.toFloat(); val h = height.toFloat()
     if (w == 0f || h == 0f) return
     val count = (w * h / 12f).toInt().coerceIn(20, 800)
     repeat(count) { particles.add(randomParticle(w, h)) }
@@ -315,67 +283,51 @@ class BlurTextView : AppCompatTextView {
   }
 
   private fun updateParticles() {
-    val w = width.toFloat()
-    val h = height.toFloat()
+    val w = width.toFloat(); val h = height.toFloat()
     if (w == 0f || h == 0f) return
     val toAdd = mutableListOf<Particle>()
     val iterator = particles.iterator()
     while (iterator.hasNext()) {
       val p = iterator.next()
-      p.x += p.vx
-      p.y += p.vy
-      p.life += 1f
+      p.x += p.vx; p.y += p.vy; p.life += 1f
       val progress = p.life / p.maxLife
       p.alpha = when {
         progress < 0.2f -> (progress / 0.2f * 200).toInt()
         progress > 0.8f -> ((1f - (progress - 0.8f) / 0.2f) * 200).toInt()
         else -> 200
       }.coerceIn(0, 255)
-      if (p.life >= p.maxLife) {
-        iterator.remove()
-        toAdd.add(randomParticle(w, h))
-      }
+      if (p.life >= p.maxLife) { iterator.remove(); toAdd.add(randomParticle(w, h)) }
     }
     particles.addAll(toAdd)
   }
 
-  // ── Layout / lifecycle ──────────────────────────────────────────────────────
+  // ── Drawing ───────────────────────────────────────────────────────────────────
 
   override fun onDraw(canvas: android.graphics.Canvas) {
     when {
       isRevealing -> {
         val textAlpha = (revealProgress * 255f).toInt().coerceIn(0, 255)
-
         canvas.save()
-        canvas.translate(0f, paint.fontMetricsInt.descent.toFloat())
-        canvas.saveLayerAlpha(
-          0f, -paint.fontMetricsInt.descent.toFloat(),
-          width.toFloat(), height.toFloat(),
-          textAlpha
-        )
+        canvas.saveLayerAlpha(0f, -paint.fontMetricsInt.descent.toFloat(), width.toFloat(), height.toFloat(), textAlpha)
         super.onDraw(canvas)
-        canvas.restore()
-        canvas.restore()
-
-        drawParticles(canvas)
+        canvas.restore(); canvas.restore()
+        drawParticles(canvas)   // remaining particles drawn on top of fading text
       }
-
-      isSpoilerActive -> {
-        drawParticles(canvas)
-      }
-
+      isSpoilerActive -> drawParticles(canvas)
       else -> {
         canvas.save()
-        canvas.translate(0f, paint.fontMetricsInt.descent.toFloat())
         super.onDraw(canvas)
         canvas.restore()
       }
     }
   }
 
-  override fun getBaseline(): Int {
+  override fun layout(l: Int, t: Int, r: Int, b: Int) {
     val fm = paint.fontMetricsInt
-    return fm.descent + (-fm.ascent)
+    val descent = fm.descent
+    // Shift the view up by descent so baseline aligns correctly
+    // and descenders have room to render below
+    super.layout(l, t + descent, r, b + descent)
   }
 
   private fun drawParticles(canvas: android.graphics.Canvas) {
@@ -388,16 +340,16 @@ class BlurTextView : AppCompatTextView {
     }
   }
 
+  // ── Lifecycle ─────────────────────────────────────────────────────────────────
+
   fun afterUpdateTransaction() {
-    updateTypeface()
-    applyLineHeight()
-    applyBlur()
-    isInitialized = true
+    updateTypeface(); applyLineHeight(); applyBlur(); isInitialized = true
   }
 
   override fun onDetachedFromWindow() {
     super.onDetachedFromWindow()
     android.view.Choreographer.getInstance().removeFrameCallback(frameCallback)
+    android.view.Choreographer.getInstance().removeFrameCallback(revealCallback)
   }
 
   override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -409,7 +361,6 @@ class BlurTextView : AppCompatTextView {
     if (!typefaceDirty) return
     typefaceDirty = false
     val newTypeface = applyStyles(typeface, fontStyle, fontWeight, fontFamily, context.assets)
-    typeface = newTypeface
-    paint.typeface = newTypeface
+    typeface = newTypeface; paint.typeface = newTypeface
   }
 }
