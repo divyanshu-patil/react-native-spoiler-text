@@ -51,15 +51,18 @@ class BlurTextView : AppCompatTextView {
     includeFontPadding = false
     setLineSpacing(0f, 1f)
     isElegantTextHeight = false
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) setFallbackLineSpacing(false)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) breakStrategy = LineBreaker.BREAK_STRATEGY_HIGH_QUALITY
-    setPadding(0, 0, 0, 0)
+
+    val descent = paint.fontMetricsInt.descent
+    setPadding(0, 0, 0, descent)
+
     setBackgroundColor(Color.TRANSPARENT)
     layoutManager = BlurTextViewLayoutManager(this)
   }
 
   // ── Blur ─────────────────────────────────────────────────────────────────────
-
   fun setBlurRadius(radius: Float) {
     blurRadius = radius
     if (!isRevealing) applyBlur()
@@ -78,7 +81,6 @@ class BlurTextView : AppCompatTextView {
   }
 
   // ── Text ──────────────────────────────────────────────────────────────────────
-
   fun setValue(value: CharSequence?) {
     if (value == null) return
     if (text?.toString() == value.toString()) return
@@ -89,7 +91,6 @@ class BlurTextView : AppCompatTextView {
   }
 
   // ── Appearance ────────────────────────────────────────────────────────────────
-
   fun setFontSize(size: Float) {
     if (size == 0f) return
     val sizePx = ceil(PixelUtil.toPixelFromSP(size))
@@ -129,7 +130,6 @@ class BlurTextView : AppCompatTextView {
   }
 
   // ── Particle data class ───────────────────────────────────────────────────────
-
   private data class Particle(
     var x: Float, var y: Float,
     var vx: Float, var vy: Float,
@@ -138,7 +138,6 @@ class BlurTextView : AppCompatTextView {
   )
 
   // ── Spoiler activate ──────────────────────────────────────────────────────────
-
   private val frameCallback = object : android.view.Choreographer.FrameCallback {
     override fun doFrame(frameTimeNanos: Long) {
       if (!isSpoilerActive) return
@@ -162,10 +161,7 @@ class BlurTextView : AppCompatTextView {
     }
   }
 
-  fun setRevealTouchPoint(x: Float, y: Float) { revealTouchX = x; revealTouchY = y }
-
   // ── Reveal ────────────────────────────────────────────────────────────────────
-
   private fun startReveal() {
     isRevealing = true; isSpoilerActive = false; revealProgress = 0f
     if (revealTouchX < 0f) revealTouchX = width / 2f
@@ -253,7 +249,6 @@ class BlurTextView : AppCompatTextView {
   }
 
   // ── Particle helpers ──────────────────────────────────────────────────────────
-
   fun setColor(colorInt: Int?) {
     particleColor = colorInt ?: Color.BLACK
     if (!isSpoilerActive) setTextColor(particleColor)
@@ -300,8 +295,17 @@ class BlurTextView : AppCompatTextView {
     particles.addAll(toAdd)
   }
 
-  // ── Drawing ───────────────────────────────────────────────────────────────────
+  private fun drawParticles(canvas: android.graphics.Canvas) {
+    val r = (particleColor shr 16) and 0xFF
+    val g = (particleColor shr 8) and 0xFF
+    val b = particleColor and 0xFF
+    for (p in particles) {
+      particlePaint.color = Color.argb(p.alpha, r, g, b)
+      canvas.drawCircle(p.x, p.y, p.radius, particlePaint)
+    }
+  }
 
+  // ── Drawing ───────────────────────────────────────────────────────────────────
   override fun onDraw(canvas: android.graphics.Canvas) {
     if (!isRevealing) {
       paint.maskFilter =
@@ -327,25 +331,19 @@ class BlurTextView : AppCompatTextView {
     }
   }
 
+  // ── Lifecycle ─────────────────────────────────────────────────────────────────
+  /**
+   * yoga aligns view with baseline
+   * so descent are rendered at bottom instead of under baseline
+   * we translate our view down by descent to align with baseline
+   */
   override fun layout(l: Int, t: Int, r: Int, b: Int) {
     val fm = paint.fontMetricsInt
     val descent = fm.descent
-    // Shift the view up by descent so baseline aligns correctly
+    // Shift the view down by descent so baseline aligns correctly
     // and descenders have room to render below
     super.layout(l, t + descent, r, b + descent)
   }
-
-  private fun drawParticles(canvas: android.graphics.Canvas) {
-    val r = (particleColor shr 16) and 0xFF
-    val g = (particleColor shr 8) and 0xFF
-    val b = particleColor and 0xFF
-    for (p in particles) {
-      particlePaint.color = Color.argb(p.alpha, r, g, b)
-      canvas.drawCircle(p.x, p.y, p.radius, particlePaint)
-    }
-  }
-
-  // ── Lifecycle ─────────────────────────────────────────────────────────────────
 
   fun afterUpdateTransaction() {
     updateTypeface(); applyLineHeight(); applyBlur(); isInitialized = true

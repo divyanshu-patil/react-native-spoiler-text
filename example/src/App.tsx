@@ -10,10 +10,10 @@ import Animated, {
 const AnimatedBlurTextView = Animated.createAnimatedComponent(BlurTextView);
 
 export default function App() {
-  const text = ` helcdg`;
+  const text = `this  is an example of blur view`;
   const [spoiler, setSpoiler] = useState(true);
 
-  const blur = useSharedValue(40);
+  const blur = useSharedValue(70);
 
   const animatedProps = useAnimatedProps(() => ({
     blurRadius: blur.value,
@@ -27,20 +27,25 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={{ fontSize: 34 }}>
-        This is exa text view
-        <AnimatedBlurTextView
-          animatedProps={animatedProps}
-          fontSize={34}
-          spoiler={false}
-          style={styles.box}
-          text={text}
-          // blurRadius={15}
-          onPress={() => {
-            console.log('oreess');
-            handlePress();
-          }}
-        />{' '}
-        hello cfdhvkj hdjvhj khjjfkdhkjvh{' '}
+        This is normal text{' '}
+        {text.split(' ').map((item, index) => (
+          <Text key={index}>
+            <AnimatedBlurTextView
+              animatedProps={animatedProps}
+              fontSize={34}
+              // spoiler={spoiler}
+              style={styles.box}
+              text={item + ' '}
+              // blurRadius={15}
+              onPress={() => {
+                console.log('oreess');
+                handlePress();
+                // setSpoiler(false);
+              }}
+            />
+          </Text>
+        ))}
+        and this is normal text{' '}
         <BlurTextView
           spoiler={spoiler}
           style={styles.box}
