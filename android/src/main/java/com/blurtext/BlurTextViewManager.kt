@@ -22,7 +22,15 @@ class BlurTextViewManager :
   override fun getName(): String = NAME
 
   override fun createViewInstance(context: ThemedReactContext): BlurTextView {
-    return BlurTextView(context)
+    val view = BlurTextView(context)
+    view.setOnClickListener {
+      val event = com.facebook.react.bridge.Arguments.createMap()
+      val reactContext = view.context as ThemedReactContext
+      reactContext
+        .getJSModule(com.facebook.react.uimanager.events.RCTEventEmitter::class.java)
+        .receiveEvent(view.id, "onPress", event)
+    }
+    return view
   }
 
   override fun updateState(
@@ -46,14 +54,6 @@ class BlurTextViewManager :
   @ReactProp(name = "spoiler")
   override fun setSpoiler(view: BlurTextView, value: Boolean) {
     view.setSpoiler(value)
-
-    view.setOnClickListener {
-      val event = com.facebook.react.bridge.Arguments.createMap()
-      val reactContext = view.context as ThemedReactContext
-      reactContext
-        .getJSModule(com.facebook.react.uimanager.events.RCTEventEmitter::class.java)
-        .receiveEvent(view.id, "onPress", event)
-    }
   }
 
   override fun setBlurRadius(view: BlurTextView, value: Float) {

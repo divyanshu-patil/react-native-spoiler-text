@@ -75,7 +75,6 @@ class BlurTextView : AppCompatTextView {
       setLayerType(LAYER_TYPE_HARDWARE, null)
     }
     invalidate()
-    requestLayout()
   }
 
   // ── Text ──────────────────────────────────────────────────────────────────────
@@ -304,6 +303,12 @@ class BlurTextView : AppCompatTextView {
   // ── Drawing ───────────────────────────────────────────────────────────────────
 
   override fun onDraw(canvas: android.graphics.Canvas) {
+    if (!isRevealing) {
+      paint.maskFilter =
+        if (blurRadius > 0f)
+          BlurMaskFilter(blurRadius, BlurMaskFilter.Blur.NORMAL)
+        else null
+    }
     when {
       isRevealing -> {
         val textAlpha = (revealProgress * 255f).toInt().coerceIn(0, 255)

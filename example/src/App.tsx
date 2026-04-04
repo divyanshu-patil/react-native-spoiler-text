@@ -1,30 +1,56 @@
 import { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { BlurTextView } from 'react-native-blur-text';
+import Animated, {
+  useAnimatedProps,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+
+const AnimatedBlurTextView = Animated.createAnimatedComponent(BlurTextView);
 
 export default function App() {
-  const text = ` helcdvc hiee  g vfdv g fsfdvfd`;
+  const text = ` helcdg`;
   const [spoiler, setSpoiler] = useState(true);
-  const [spoiler2, setSpoiler2] = useState(true);
+
+  const blur = useSharedValue(40);
+
+  const animatedProps = useAnimatedProps(() => ({
+    blurRadius: blur.value,
+  }));
+
+  const handlePress = () => {
+    console.log('PREASed');
+    blur.value = withTiming(0, { duration: 300 });
+  };
+
   return (
     <View style={styles.container}>
-      <Text>
-        This is exa text view jj
-        <BlurTextView
-          spoiler={spoiler}
+      <Text style={{ fontSize: 34 }}>
+        This is exa text view
+        <AnimatedBlurTextView
+          animatedProps={animatedProps}
+          fontSize={34}
+          spoiler={false}
           style={styles.box}
           text={text}
-          blurRadius={0}
-          onPress={() => setSpoiler(false)}
+          // blurRadius={15}
+          onPress={() => {
+            console.log('oreess');
+            handlePress();
+          }}
         />{' '}
         hello cfdhvkj hdjvhj khjjfkdhkjvh{' '}
         <BlurTextView
-          spoiler={spoiler2}
+          spoiler={spoiler}
           style={styles.box}
           text={'hello 2'}
-          blurRadius={7}
-          color={'red'}
-          onPress={() => setSpoiler2(false)}
+          // color={'red'}
+          onPress={() => {
+            setSpoiler(false);
+          }}
+          // blurRadius={20}
+          fontSize={34}
         />
       </Text>
     </View>
@@ -39,11 +65,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   box: {
-    // width: 100,
-    // height: 20,
-    // paddingLeft: 10,
-    // color: 'black',
-    // paddingTop: 2,
-    // backgroundColor: 'tomato',
+    // backgroundColor: '#e0a333',
+    overflow: 'visible',
+    // transform: [{ translateY: 2 }],
   },
 });
