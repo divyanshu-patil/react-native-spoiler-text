@@ -9,7 +9,13 @@
 <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="License" />
 
 <br /><br />
+</div>
 
+> [!WARNING]
+> **Experimental:** This library is in an experimental stage and is **not recommended for use at scale** or in production environments. APIs may change without notice, edge cases are likely unhandled, and stability is not guaranteed.
+
+<div align="center">
+  
 # 👁️ react-native-spoiler-text
 
 **A native, high-performance spoiler text component for React Native.**  
@@ -33,6 +39,7 @@ Blur your text. Reveal on tap. Built with Fabric / New Architecture support.
 
 > [!NOTE]
 > currently supported for Android only
+> Experimental: This library is in an experimental stage and is **not recommended for use at scale** or in production environments. APIs may change without notice, edge cases are likely unhandled, and stability is not guaranteed.
 
 ## ✨ Features
 
